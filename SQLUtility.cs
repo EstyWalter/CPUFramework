@@ -46,18 +46,32 @@ namespace CPUFramework
             }
         }
 
-        public static int GetFirstColumnsFirstRowValue(string sql)
+        public static int GetFirstColumnsFirstRowValueInt(string sql)
         {
+          return Convert.ToInt32(GetFirstColumnsFirstRowValue(sql, "int"));
+        }
+
+        public static object GetFirstColumnsFirstRowValue(string sql, string typeofcharacters)
+        {
+            string s = "";
             int n = 0;
             DataTable dt = GetDataTable(sql);
-            if(dt.Rows.Count > 0 && dt.Columns.Count > 0)
+            if (dt.Rows.Count > 0 && dt.Columns.Count > 0)
             {
                 if (dt.Rows[0][0] != DBNull.Value)
                 {
-                    int.TryParse(dt.Rows[0][0].ToString(), out n);
+                    if (typeofcharacters == "string")
+                    {
+                        s = dt.Rows[0][0].ToString();
+                    }
+                    else
+                    {
+                        int.TryParse(dt.Rows[0][0].ToString(), out n);
+                        return n;
+                    }
                 }
             }
-            return n;
+            return s;
         }
     }
 }
