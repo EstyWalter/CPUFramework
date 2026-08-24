@@ -40,7 +40,6 @@ namespace CPUFramework
 
         public static DataTable GetDataTable(string sqlstatement)
         {
-     
             return GetDataTable(new SqlCommand(sqlstatement));
         }
 
