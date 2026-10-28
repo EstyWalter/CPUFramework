@@ -9,6 +9,25 @@ namespace CPUFramework
     {
         public static string ConnectionString = "";
 
+        public static void SetConnectionString(string connstring, bool tryopen, string userid = "", string password = "")
+        {
+            ConnectionString = connstring;
+            if(userid != "")
+            {
+                SqlConnectionStringBuilder b = new();
+                b.ConnectionString = ConnectionString;
+                b.UserID = userid;
+                b.Password = password;
+                ConnectionString = b.ConnectionString;
+            }
+            if (tryopen)
+            {
+                using(SqlConnection conn = new SqlConnection(ConnectionString)){
+                    conn.Open();
+                }
+            }
+        }
+
         public static SqlCommand GetSqlCommand(string sprocname)
         {
             SqlCommand cmd;
@@ -36,7 +55,7 @@ namespace CPUFramework
             {
                 conn.Open();
                 cmd.Connection = conn;
-                Debug.Print(GetSQL(cmd));
+               
                 try
                 {
                     var dr = cmd.ExecuteReader();
@@ -55,7 +74,7 @@ namespace CPUFramework
                 {
                     throw new Exception(cmd.CommandText + ": " + ex.Message, ex);
                 }
-             
+                Debug.Print(GetSQL(cmd));
             }
             SetAllColoumnProperties(dt);
             return dt;
@@ -102,7 +121,7 @@ namespace CPUFramework
 
         public static void SaveDataTable(DataTable dt, string sprocname)
         {
-         var rows = dt.Select("", "", DataViewRowState.Added | DataViewRowState.ModifiedCurrent);
+            var rows = dt.Select("", "", DataViewRowState.Added | DataViewRowState.ModifiedCurrent);
             foreach(DataRow r in rows)
             {
                 SaveDataRow(r, sprocname, false);
